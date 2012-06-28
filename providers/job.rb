@@ -40,7 +40,7 @@ def post_job(url)
   #shame we can't use http_request resource
   url = URI.parse(url)
   Chef::Log.debug("[jenkins_job] POST #{url.request_uri} using #{@new_resource.config}")
-  body = IO.read(@new_resource.config)
+  body = @new_resource.config
   headers = {"Content-Type" => "text/xml"}
   res = Chef::REST::RESTRequest.new(:POST, url, body, headers).call
   res.error! unless res.kind_of?(Net::HTTPSuccess)

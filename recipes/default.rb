@@ -24,6 +24,13 @@
 pkey = "#{node[:jenkins][:server][:home]}/.ssh/id_rsa"
 tmp = "/tmp"
 
+home_path     = node['jenkins']['server']['home']
+server_user   = node['jenkins']['server']['user']
+server_group  = node['jenkins']['server']['group']
+server_port   = node['jenkins']['server']['port']
+mirror_url    = node['jenkins']['mirror']
+plugins       = node['jenkins']['server']['plugins']
+
 user node[:jenkins][:server][:user] do
   home node[:jenkins][:server][:home]
 end
@@ -58,23 +65,12 @@ directory "#{node[:jenkins][:server][:home]}/plugins" do
   only_if { node[:jenkins][:server][:plugins].size > 0 }
 end
 
-node[:jenkins][:server][:plugins].each do |name|
-  remote_file "#{node[:jenkins][:server][:home]}/plugins/#{name}.hpi" do
-    source "#{node[:jenkins][:mirror]}/latest/#{name}.hpi"
-    backup false
-    owner node[:jenkins][:server][:user]
-    group node[:jenkins][:server][:group]
-    action :nothing
-  end
-
-  http_request "HEAD #{node[:jenkins][:mirror]}/latest/#{name}.hpi" do
-    message ""
-    url "#{node[:jenkins][:mirror]}/latest/#{name}.hpi"
-    action :head
-    if File.exists?("#{node[:jenkins][:server][:home]}/plugins/#{name}.hpi")
-      headers "If-Modified-Since" => File.mtime("#{node[:jenkins][:server][:home]}/plugins/#{name}.hpi").httpdate
-    end
-    notifies :create, resources(:remote_file => "#{node[:jenkins][:server][:home]}/plugins/#{name}.hpi"), :immediately
+plugins.each do |name|
+  remote_file "#{home_path}/plugins/#{name}.hpi" do
+    source  "#{mirror_url}/plugins/#{name}/latest/#{name}.hpi"
+    backup  false
+    owner server_user
+    group server_group
   end
 end
 
@@ -110,10 +106,9 @@ when "ubuntu", "debian"
 
     apt_repository "jenkins" do
       uri "http://pkg.jenkins-ci.org/debian"
-      distribution "binary/"
-      components [""]
+      distributions [""]
+      components ["binary/"]
       key "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
-      action :add
     end
   end
 
