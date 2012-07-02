@@ -24,7 +24,7 @@
 default[:jenkins][:mirror] = "http://mirrors.jenkins-ci.org"
 default[:jenkins][:java_home] = ENV['JAVA_HOME']
 
-default[:jenkins][:server][:home] = "/var/lib/jenkins"
+default[:jenkins][:server][:home] = "/home/jenkins"
 default[:jenkins][:server][:user] = "jenkins"
 
 case node[:platform]
