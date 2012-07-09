@@ -5,6 +5,6 @@
   <subdomain><%= node[:jenkins][:campfire][:server] %></subdomain>
   <token><%= node[:jenkins][:campfire][:api_key] %></token>
   <room><%= node[:jenkins][:campfire][:room] %></room>
-  <hudsonUrl><%= node[:jenkins][:server][:url] %></hudsonUrl>
+  <hudsonUrl><%= "#{node[:jenkins][:server][:url]}/" %></hudsonUrl>
   <ssl>true</ssl>
 </hudson.plugins.campfire.DescriptorImpl>
