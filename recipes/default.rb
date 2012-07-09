@@ -21,6 +21,9 @@
 # limitations under the License.
 #
 
+require 'net/http'
+require 'json'
+
 pkey = "#{node[:jenkins][:server][:home]}/.ssh/id_rsa"
 tmp = "/tmp"
 
@@ -234,4 +237,75 @@ when "nginx"
   include_recipe "jenkins::proxy_nginx"
 when "apache2"
   include_recipe "jenkins::proxy_apache2"
+end
+
+template "#{node[:jenkins][:server][:home]}/hudson.plugins.campfire.CampfireNotifier.xml" do
+  source "hudson.plugins.campfire.CampfireNotifier.xml.erb"
+  mode "0644"
+  owner server_user
+  group server_group
+  backup false
+end
+
+job_template = ERB.new(
+  File.read(
+    File.expand_path("../../templates/default/job.xml.erb", __FILE__)
+  )
+)
+
+node[:jenkins][:jobs].each do |job|
+  jenkins_job job[:name] do
+    config job_template.result(binding)
+  end
+end
+
+ruby_block "configure_views" do
+  block do
+    node[:jenkins][:views].each do |view|  
+      # Create the view
+      uri = URI("#{node[:jenkins][:server][:url]}/createView")
+      form_data = {
+        "name" => view[:name],
+        "mode" => view[:type],
+        "json" => JSON.dump({
+          "name" => view[:name],
+          "mode" => view[:type]
+        }),
+        "Submit" => "ok"
+      }
+      response = Net::HTTP.post_form(uri, form_data)
+
+      # Set up the view
+      uri = URI("#{node[:jenkins][:server][:url]}/view/#{view[:name]}/configSubmit")
+      form_data = {
+        "name" => view[:name],
+        "description" => "",
+        "useincluderegex" => "on",
+        "includeRegex" => view[:job_regex],
+        "showStable" => "true",
+        "json" => JSON.dump({
+          "name" => "#{view[:name]}",
+          "description" => "",
+          "" => "",
+          "filterQueue" => "false",
+          "filterExecutors" => "false",
+          "useincluderegex" => {
+            "includeRegex" => ".*"
+          },
+          "showStable" => "true",
+          "showStableDetail" => "false",
+          "highVis" => "false",
+          "groupByPrefix" => "false"
+        }),
+        "Submit" => "ok"
+      }
+      response = Net::HTTP.post_form(uri, form_data)
+    end
+  end
+  action :nothing
+end
+
+service "jenkins" do
+  action :restart
+  notifies :create, resources(:ruby_block => "configure_views"), :delayed
 end
