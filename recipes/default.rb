@@ -305,7 +305,11 @@ ruby_block "configure_views" do
   action :nothing
 end
 
-service "jenkins" do
-  action :restart
+log "everything set up, restarting jenkins" do
+  #ugh :restart does not work, need to sleep after stop.
+  notifies :stop, "service[jenkins]", :immediately
+  notifies :create, "ruby_block[netstat]", :immediately
+  notifies :start, "service[jenkins]", :immediately
+  notifies :create, "ruby_block[block_until_operational]", :immediately
   notifies :create, resources(:ruby_block => "configure_views"), :delayed
 end
