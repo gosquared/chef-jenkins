@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.campfire.DescriptorImpl>
+  <helpRedirect/>
+  <enabled>false</enabled>
+  <subdomain><%= node[:jenkins][:campfire][:server] %></subdomain>
+  <token><%= node[:jenkins][:campfire][:api_key] %></token>
+  <room><%= node[:jenkins][:campfire][:room] %></room>
+  <hudsonUrl><%= node[:jenkins][:server][:url] %></hudsonUrl>
+  <ssl>true</ssl>
+</hudson.plugins.campfire.DescriptorImpl>
