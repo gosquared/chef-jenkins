@@ -25,7 +25,7 @@ def jenkins_node_defaults(args)
   args[:name] ||= nil #required
   args[:description] ||= ""
   args[:remote_fs] ||= nil #required
-  args[:executors] ||= 1
+  args[:executors] ||= node[:jenkins][:node][:executors]
   args[:mode] ||= "NORMAL" #"NORMAL" or "EXCLUSIVE"
   args[:labels] ||= ""
   args[:launcher] ||= "jnlp" #"jnlp" or "command" or "ssh"

@@ -28,7 +28,7 @@
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
     <authorOrCommitter>false</authorOrCommitter>
     <clean>false</clean>
-    <wipeOutWorkspace>true</wipeOutWorkspace>
+    <wipeOutWorkspace><%= !!job[:wipe_workspace] %></wipeOutWorkspace>
     <pruneBranches>false</pruneBranches>
     <remotePoll>false</remotePoll>
     <ignoreNotifyCommit>false</ignoreNotifyCommit>

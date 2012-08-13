@@ -21,9 +21,8 @@
 # limitations under the License.
 #
 
-default[:jenkins][:mirror] = "http://mirrors.jenkins-ci.org"
-default[:jenkins][:java_home] = ENV['JAVA_HOME']
-
+default[:jenkins][:mirror]        = "http://mirrors.jenkins-ci.org"
+default[:jenkins][:java_home]     = ENV['JAVA_HOME']
 default[:jenkins][:server][:home] = "/home/jenkins"
 default[:jenkins][:server][:user] = "jenkins"
 
@@ -49,7 +48,6 @@ default[:jenkins][:server][:plugins] = []
 default[:jenkins][:server][:use_head] = false
 
 #See Jenkins >> Nodes >> $name >> Configure
-
 #"Name"
 default[:jenkins][:node][:name] = node[:fqdn]
 

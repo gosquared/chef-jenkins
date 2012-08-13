@@ -27,12 +27,12 @@ require 'json'
 pkey = "#{node[:jenkins][:server][:home]}/.ssh/id_rsa"
 tmp = "/tmp"
 
-home_path     = node['jenkins']['server']['home']
-server_user   = node['jenkins']['server']['user']
-server_group  = node['jenkins']['server']['group']
-server_port   = node['jenkins']['server']['port']
-mirror_url    = node['jenkins']['mirror']
-plugins       = node['jenkins']['server']['plugins']
+home_path     = node[:jenkins][:server][:home]
+server_user   = node[:jenkins][:server][:user]
+server_group  = node[:jenkins][:server][:group]
+server_port   = node[:jenkins][:server][:port]
+mirror_url    = node[:jenkins][:mirror]
+plugins       = node[:jenkins][:server][:plugins]
 
 # We might not need these
 # execute "ssh-keygen -f #{pkey} -N ''" do
