@@ -255,7 +255,6 @@ job_template = ERB.new(
 
 node[:jenkins][:jobs].each do |job|
   jenkins_job job[:name] do
-    puts job_template.result(binding)
     config job_template.result(binding)
   end
 end
