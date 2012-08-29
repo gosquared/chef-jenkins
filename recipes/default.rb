@@ -256,6 +256,7 @@ job_template = ERB.new(
 node[:jenkins][:jobs].each do |job|
   jenkins_job job[:name] do
     config job_template.result(binding)
+    action job.fetch(:action) { :update }
   end
 end
 
