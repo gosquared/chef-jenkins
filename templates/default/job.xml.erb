@@ -61,11 +61,18 @@
   <publishers>
     <% if node[:jenkins][:campfire] %>
       <hudson.plugins.campfire.CampfireNotifier>
+        <campfire>
+          <subdomain><%= node[:jenkins][:campfire][:server] %></subdomain>
+          <token><%= node[:jenkins][:campfire][:api_key] %></token>
+          <ssl>true</ssl>
+        </campfire>
         <room>
-          <name><%= node[:jenkins][:campfire][:rooms] %></name>
-          <id><%= node[:jenkins][:campfire][:id] %></id>
+          <campfire reference="../../campfire"/>
+          <id><%= node[:jenkins][:campfire][:room] %></id>
         </room>
-        <hudsonUrl><%= node[:jenkins][:server][:url] %></hudsonUrl>
+        <hudsonUrl><%= "#{node[:jenkins][:campfire][:url]}/" %></hudsonUrl>
+        <smartNotify>false</smartNotify>
+        <sound>false</sound>
       </hudson.plugins.campfire.CampfireNotifier>
     <% end %>
   </publishers>
