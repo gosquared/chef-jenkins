@@ -69,6 +69,7 @@
         <room>
           <campfire reference="../../campfire"/>
           <name><%= node[:jenkins][:campfire][:room] %></name>
+          <id><%= node[:jenkins][:campfire][:id] %></id>
         </room>
         <hudsonUrl><%= "#{node[:jenkins][:campfire][:url]}/" %></hudsonUrl>
         <smartNotify>false</smartNotify>
