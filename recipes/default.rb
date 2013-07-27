@@ -53,12 +53,26 @@ directory "#{node[:jenkins][:server][:home]}/plugins" do
   only_if { node[:jenkins][:server][:plugins].size > 0 }
 end
 
-plugins.each do |name|
-  remote_file "#{home_path}/plugins/#{name}.hpi" do
-    source  "#{mirror_url}/plugins/#{name}/latest/#{name}.hpi"
-    backup  false
-    owner server_user
-    group server_group
+plugins.each do |plugin|
+  version = 'latest'
+  if plugin.is_a?(Hash)
+    name = plugin[:name]
+    version = plugin[:version] if plugin[:version]
+  else
+    name = plugin
+  end
+
+  # Plugins installed from the Jenkins Update Center are written to disk with
+  # the `*.jpi` extension. Although plugins downloaded from the Jenkins Mirror
+  # have an `*.hpi` extension we will save the plugins with a `*.jpi` extension
+  # to match Update Center's behavior.
+  remote_file "#{node[:jenkins][:server][:home]}/plugins/#{name}.jpi" do
+    source "#{mirror_url}/plugins/#{name}/#{version}/#{name}.hpi"
+    owner node[:jenkins][:server][:user]
+    group node[:jenkins][:server][:group]
+    backup false
+    action :create_if_missing
+    notifies :create, "ruby_block[block_until_operational]"
   end
 end
 
@@ -262,7 +276,7 @@ end
 
 ruby_block "configure_views" do
   block do
-    node[:jenkins][:views].each do |view|  
+    node[:jenkins][:views].each do |view|
       # Create the view
       uri = URI("#{node[:jenkins][:server][:url]}/createView")
       form_data = {
