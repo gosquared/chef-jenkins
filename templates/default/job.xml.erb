@@ -9,6 +9,20 @@
     <artifactNumToKeep>-1</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
+  <properties>
+    <% if node[:jenkins][:slack] %>
+    <jenkins.plugins.slack.SlackNotifier_-SlackJobProperty plugin="slack@1.0">
+      <room></room>
+      <startNotification>true</startNotification>
+      <notifySuccess>true</notifySuccess>
+      <notifyAborted>true</notifyAborted>
+      <notifyNotBuilt>true</notifyNotBuilt>
+      <notifyUnstable>true</notifyUnstable>
+      <notifyFailure>true</notifyFailure>
+      <notifyBackToNormal>true</notifyBackToNormal>
+    </jenkins.plugins.slack.SlackNotifier_-SlackJobProperty>
+    <% end %>
+  </properties>
   <scm class="hudson.plugins.git.GitSCM">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
@@ -75,6 +89,14 @@
         <smartNotify>false</smartNotify>
         <sound>false</sound>
       </hudson.plugins.campfire.CampfireNotifier>
+    <% end %>
+    <% if node[:jenkins][:slack] %>
+      <jenkins.plugins.slack.SlackNotifier plugin="slack@1.0">
+        <teamDomain><%= node[:jenkins][:slack][:domain] %></teamDomain>
+        <authToken><%= node[:jenkins][:slack][:token] %></authToken>
+        <room><%= node[:jenkins][:slack][:room] %></room>
+        <buildServerUrl><%= node[:jenkins][:slack][:url] %></buildServerUrl>
+      </jenkins.plugins.slack.SlackNotifier>
     <% end %>
   </publishers>
   <buildWrappers/>

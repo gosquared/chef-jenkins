@@ -253,8 +253,8 @@ when "apache2"
   include_recipe "jenkins::proxy_apache2"
 end
 
-template "#{node[:jenkins][:server][:home]}/hudson.plugins.campfire.CampfireNotifier.xml" do
-  source "hudson.plugins.campfire.CampfireNotifier.xml.erb"
+template "#{node[:jenkins][:server][:home]}/jenkins.plugins.slack.SlackNotifier.xml" do
+  source "jenkins.plugins.slack.SlackNotifier.xml.erb"
   mode "0644"
   owner server_user
   group server_group
